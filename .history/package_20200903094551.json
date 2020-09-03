@@ -44,7 +44,7 @@
     "commit": "git-cz"
   },
   "gitHooks": {
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
   },
   "lint-staged": {
     "*.js": [
