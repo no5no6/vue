@@ -13,8 +13,16 @@ export function initEvents (vm: Component) {
   vm._events = Object.create(null)
   vm._hasHookEvent = false
   // init parent attached events
+  /**
+   *  @author yuanyang
+   *  获取父元素上的事件。
+   */
   const listeners = vm.$options._parentListeners
   if (listeners) {
+  /**
+   *  @author yuanyang
+   *  将父元素上的事件，注册到当前组件上。
+   */
     updateComponentListeners(vm, listeners)
   }
 }
@@ -51,6 +59,11 @@ export function updateComponentListeners (
 
 export function eventsMixin (Vue: Class<Component>) {
   const hookRE = /^hook:/
+
+  /**
+   *  @author yuanyang
+   *  $on 参数可以输数组或字符串，如果是数组会遍历数组，注册多个事件。
+   */
   Vue.prototype.$on = function (event: string | Array<string>, fn: Function): Component {
     const vm: Component = this
     if (Array.isArray(event)) {

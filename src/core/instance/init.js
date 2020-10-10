@@ -12,6 +12,11 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 
 let uid = 0
 
+/**
+ * @author yuanyang
+ * 给 vue 实例增加 _init() 方法
+ */
+
 export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
@@ -19,6 +24,12 @@ export function initMixin (Vue: Class<Component>) {
     vm._uid = uid++
 
     let startTag, endTag
+    
+    /**
+     * @author yuanyang
+     * 开发环境性能检测
+     */
+
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       startTag = `vue-perf-start:${vm._uid}`
@@ -28,6 +39,13 @@ export function initMixin (Vue: Class<Component>) {
 
     // a flag to avoid this being observed
     vm._isVue = true
+
+    /**
+     * @author yuanyang
+     * 合并 options， vue 自身 options（如：初始化的时创建的 v-show、keep-alive 等属性） 与 用户传递的 options 作合并。
+     * vm.constructor vue 构造函数，
+     */
+
     // merge options
     if (options && options._isComponent) {
       // optimize internal component instantiation
@@ -41,6 +59,11 @@ export function initMixin (Vue: Class<Component>) {
         vm
       )
     }
+
+    /**
+     * @author yuanyang
+     * 设置渲染时的代理对象
+     */
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
       initProxy(vm)
@@ -49,13 +72,47 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+
+    /**
+     * @author yuanyang
+     * 初始化跟生命周期相关的属性 $children/$parent/$root/$refs
+     */
     initLifecycle(vm)
+    /**
+     * @author yuanyang
+     * vm 的事件监听初始化，父组件事件函数绑定到当前组件上
+     */
     initEvents(vm)
+    /**
+     * @author yuanyang
+     * vm 的编译 render 初始化
+     * $slots/$scopedSlots/_c/$createElment/$attrs/$listeners
+     */
     initRender(vm)
+    /**
+     * @author yuanyang
+     * beforeCreate 生命周期钩子的回调函数
+     */
     callHook(vm, 'beforeCreate')
+    /**
+     * @author yuanyang
+     * 把 inject 的成员注入到 vm 上
+     */
     initInjections(vm) // resolve injections before data/props
+    /**
+     * @author yuanyang
+     * 初始化 vm 的 _props/methods/_data/computed/watch
+     */
     initState(vm)
+    /**
+     * @author yuanyang
+     * 初始化 provide
+     */
     initProvide(vm) // resolve provide after data/props
+    /**
+     * @author yuanyang
+     * created 生命周期钩子的回调函数
+     */
     callHook(vm, 'created')
 
     /* istanbul ignore if */

@@ -226,6 +226,11 @@ export function toArray (list: any, start?: number): Array<any> {
 }
 
 /**
+ * @author yuanyang
+ * extend 方法。遍历 form 对象，赋值给 to 对象。
+ */
+
+/**
  * Mix properties into target object.
  */
 export function extend (to: Object, _from: ?Object): Object {

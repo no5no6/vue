@@ -19,6 +19,12 @@ import { patch } from './patch'
 import platformDirectives from './directives/index'
 import platformComponents from './components/index'
 
+/**
+ * @author yuanyang
+ * 判断是否是保留的标签， 是否是保留的属性。
+ * 方法在 web/util/index 下。
+ */
+
 // install platform specific utils
 Vue.config.mustUseProp = mustUseProp
 Vue.config.isReservedTag = isReservedTag
@@ -26,10 +32,20 @@ Vue.config.isReservedAttr = isReservedAttr
 Vue.config.getTagNamespace = getTagNamespace
 Vue.config.isUnknownElement = isUnknownElement
 
+/**
+ * @author yuanyang
+ * extend 方法为将第二个参数拷贝到第一个参数中。
+ */
+
 // install platform runtime directives & components
 extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
+/**
+ * @author yuanyang
+ * patch 方法，将虚拟 dom 转换成真实 dom
+ * isBrowser 方法 /src/core/util/env.js
+ */
 // install platform patch function
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 

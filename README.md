@@ -37,3 +37,6 @@
 + `Commanjs`：用于支持老的打包工具，如 webpack 低版本。
 + `ES Module`: 从 2.6 开始 Vue 会提供两个 ES Modules (ESM) 构建文件，为现代打包工具提供的
 版本,ESM 格式被设计为可以被静态分析，所以打包工具可以利用这一点来进行“tree-shaking”并 将用不到的代码排除出最终的包。
+
+## 入口文件
+`src/platforms/web/entry-runtime-with-compiler.js`

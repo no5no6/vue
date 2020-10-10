@@ -15,11 +15,23 @@ const idToTemplate = cached(id => {
 })
 
 const mount = Vue.prototype.$mount
+
+/**
+ * @author yuanyang
+ * 将生成 dom 挂在到页面
+ * el 创建 vue 实例时候传递的选项 
+ */
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
+  
   el = el && query(el)
+
+  /**
+   * @author yuanyang
+   * vue 不能绑定到 body 和 html 标签 
+   */
 
   /* istanbul ignore if */
   if (el === document.body || el === document.documentElement) {
@@ -29,7 +41,19 @@ Vue.prototype.$mount = function (
     return this
   }
 
+  /**
+   *  @author yuanyang
+   *  options 选项为创建 Vue 实例时候传递的参数。
+   */
   const options = this.$options
+
+  
+  /**
+   *  @author yuanyang
+   *  如果选项中没有 render 函数，执行 if 语句中代码将 template 转换成 render 函数
+   *  TODO： 下方代码说明，options 中同时有 render 和 template 的时候，会执行 render
+   */
+
   // resolve template/el and convert to render function
   if (!options.render) {
     let template = options.template

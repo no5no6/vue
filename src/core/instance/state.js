@@ -111,6 +111,11 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+
+  /**
+   * @author yuanyang
+   * 初始化 _data, 组件中 data 是函数，调用函数返回结果。否则直接返回 data
+   */
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
@@ -122,11 +127,26 @@ function initData (vm: Component) {
       vm
     )
   }
+
+  /**
+   * @author yuanyang
+   * 获取 data 上所有的 属性名称
+   */
+
   // proxy data on instance
   const keys = Object.keys(data)
+  /**
+   * @author yuanyang
+   * 获取 props / method
+   */
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+
+  /**
+   * @author yuanyang
+   * 判断 data、 props 、 method 是否有重名
+   */
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {

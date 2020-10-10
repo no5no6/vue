@@ -30,9 +30,15 @@ export function initExtend (Vue: GlobalAPI) {
       validateComponentName(name)
     }
 
+    /**
+     * @author yuanyang
+     * VueComponent 组件的构造函数
+     * Super.prototype 因为继承了 Vue 所以 _init 方法原自 Vue 的 _init 方法
+     */
     const Sub = function VueComponent (options) {
       this._init(options)
     }
+
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
