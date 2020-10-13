@@ -123,6 +123,11 @@ export default class Watcher {
   }
 
   /**
+   * @author yuanyang
+   * 收集依赖核心位置，将 watcher 对象添加的 sub 数组中
+   */
+
+  /**
    * Add a dependency to this directive.
    */
   addDep (dep: Dep) {
@@ -168,6 +173,10 @@ export default class Watcher {
     } else if (this.sync) {
       this.run()
     } else {
+      /**
+       * @author yuanyang
+       * 将 watcher 放到队列里
+       */ 
       queueWatcher(this)
     }
   }

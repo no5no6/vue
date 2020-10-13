@@ -163,8 +163,16 @@ function callActivatedHooks (queue) {
  */
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
+  /**
+   * @author yuanyang
+   * 判断此 watcher 对象是否已处理，如果是 null 则为未处理，避免重复处理。
+   */ 
   if (has[id] == null) {
     has[id] = true
+    /**
+     * @author yuanyang
+     * 判断存储 watcher 的队列是否在处理队列中的 watcher
+     */ 
     if (!flushing) {
       queue.push(watcher)
     } else {
