@@ -51,8 +51,16 @@ export function initState (vm: Component) {
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
   if (opts.data) {
+    /**
+     * @author yuanyang
+     * 遍历 data 上所有成员并把所有成员注入到 vue 实例上。
+     */
     initData(vm)
   } else {
+    /**
+     * @author yuanyang
+     * 处理数据响应式入口
+     */
     observe(vm._data = {}, true /* asRootData */)
   }
   if (opts.computed) initComputed(vm, opts.computed)
@@ -164,9 +172,17 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      /**
+       * @author yuanyang
+       * 把 data 中的成员注入 vue 实例
+       */
       proxy(vm, `_data`, key)
     }
   }
+  /**
+   * @author yuanyang
+   * 响应式处理入口
+   */
   // observe data
   observe(data, true /* asRootData */)
 }

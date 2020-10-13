@@ -21,6 +21,12 @@ export function isReserved (str: string): boolean {
 }
 
 /**
+ * @author yuanyang
+ * 通过对象的 defineProperty 方法，添加 key 这个属性到 obj上
+ * enumerable 代表书否可枚举，此属性用于遍历对象，为对象的属性添加 getter / setter
+ */ 
+
+/**
  * Define a property.
  */
 export function def (obj: Object, key: string, val: any, enumerable?: boolean) {
