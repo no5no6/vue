@@ -70,6 +70,10 @@ if (inBrowser && !isIE) {
  */
 function flushSchedulerQueue () {
   currentFlushTimestamp = getNow()
+  /**
+   * @author yuanyang
+   * 将 flushing 标记队列正在处理 watcher 对象
+   */ 
   flushing = true
   let watcher, id
 
@@ -83,10 +87,18 @@ function flushSchedulerQueue () {
   //    its watchers can be skipped.
   queue.sort((a, b) => a.id - b.id)
 
+  /**
+   * @author yuanyang
+   * 遍历 watcher 队列，最终遍历每一个 watcher 的 run 方法
+   */ 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index]
+    /**
+     * @author yuanyang
+     * 首先执行钩子函数 beforeUpdate 
+     */ 
     if (watcher.before) {
       watcher.before()
     }
@@ -185,6 +197,10 @@ export function queueWatcher (watcher: Watcher) {
       queue.splice(i + 1, 0, watcher)
     }
     // queue the flush
+    /**
+     * @author yuanyang
+     * 判断队列是否正在执行， waiting 为 false 说明没有执行。
+     */ 
     if (!waiting) {
       waiting = true
 

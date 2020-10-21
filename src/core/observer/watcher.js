@@ -186,8 +186,13 @@ export default class Watcher {
    * Will be called by the scheduler.
    */
   run () {
+    /**
+     * @author yuanyang
+     * 判断当前的 watcher 对象是否存活
+     */ 
     if (this.active) {
       const value = this.get()
+
       if (
         value !== this.value ||
         // Deep watchers and watchers on Object/Arrays should fire even
@@ -197,8 +202,17 @@ export default class Watcher {
         this.deep
       ) {
         // set new value
+        /**
+         * @author yuanyang
+         * 获取旧值，赋值新值
+         */ 
         const oldValue = this.value
         this.value = value
+
+        /**
+         * @author yuanyang
+         * 如果是用户的 watcher ，调用 cb 回调函数 
+         */ 
         if (this.user) {
           try {
             this.cb.call(this.vm, value, oldValue)
