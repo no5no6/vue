@@ -11,9 +11,17 @@ const callbacks = []
 let pending = false
 
 function flushCallbacks () {
+  /**
+   *  @author yuanyang
+   *  标识处理结束
+   */
   pending = false
   const copies = callbacks.slice(0)
   callbacks.length = 0
+  /**
+   *  @author yuanyang
+   *  遍历回调函数数组，依次调用方法
+   */
   for (let i = 0; i < copies.length; i++) {
     copies[i]()
   }
@@ -42,6 +50,10 @@ let timerFunc
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
   const p = Promise.resolve()
   timerFunc = () => {
+    /**
+     *  @author yuanyang
+     *  刷新回调函数数组
+     */
     p.then(flushCallbacks)
     // In problematic UIWebViews, Promise.then doesn't completely break, but
     // it can get stuck in a weird state where callbacks are pushed into the
@@ -86,6 +98,10 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
+  /**
+   *  @author yuanyang
+   *  把 cb 加上异常处理存入 callbacks 数组中
+   */
   callbacks.push(() => {
     if (cb) {
       try {
@@ -97,8 +113,16 @@ export function nextTick (cb?: Function, ctx?: Object) {
       _resolve(ctx)
     }
   })
+  /**
+   *  @author yuanyang
+   *  判断队列是否正在被处理
+   */
   if (!pending) {
     pending = true
+    /**
+     *  @author yuanyang
+     *  处理函数
+     */
     timerFunc()
   }
   // $flow-disable-line
