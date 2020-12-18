@@ -18,8 +18,16 @@ export function initExtend (Vue: GlobalAPI) {
    */
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
+   /**
+     * @author yuanyang
+     * Vue 构造函数
+     */ 
     const Super = this
     const SuperId = Super.cid
+    /**
+     * @author yuanyang
+     * 从缓存中加载组件的构造函数
+     */
     const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
     if (cachedCtors[SuperId]) {
       return cachedCtors[SuperId]
@@ -36,9 +44,17 @@ export function initExtend (Vue: GlobalAPI) {
      * Super.prototype 因为继承了 Vue 所以 _init 方法原自 Vue 的 _init 方法
      */
     const Sub = function VueComponent (options) {
+      /**
+       * @author yuanyang
+       * 调用 _init() 初始化
+       */
       this._init(options)
     }
 
+    /**
+     * @author yuanyang
+     * 原型继承自 Vue
+     */
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++

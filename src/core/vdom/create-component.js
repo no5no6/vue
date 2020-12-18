@@ -110,7 +110,11 @@ export function createComponent (
   }
 
   const baseCtor = context.$options._base
-
+  /**
+   * @author yuanyang
+   * 如果 Ctor 不是一个构造函数，是一个对象
+   * 使用 Vue.extend() 创造一个子组件的构造函数
+   */
   // plain options object: turn it into a constructor
   if (isObject(Ctor)) {
     Ctor = baseCtor.extend(Ctor)
@@ -150,11 +154,20 @@ export function createComponent (
   // component constructor creation
   resolveConstructorOptions(Ctor)
 
+  /**
+   * @author yuanyang
+   * 处理组件的 v-model
+   */
   // transform component v-model data into props & events
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
 
+  
+  /**
+   * @author yuanyang
+   * 提取 props
+   */
   // extract props
   const propsData = extractPropsFromVNodeData(data, Ctor, tag)
 
@@ -182,11 +195,21 @@ export function createComponent (
     }
   }
 
+  /**
+   * @author yuanyang
+   * 安装组价的钩子函数 init/prepatch/insert/destroy
+   * 准备好了 data.hook 中的钩子函数
+   */
   // install component management hooks onto the placeholder node
   installComponentHooks(data)
 
   // return a placeholder vnode
   const name = Ctor.options.name || tag
+  /**
+   * @author yuanyang
+   * 创建自己定义组件的 VNode 设置自定义组件的名字
+   * 记录 this.componentOptions = componentOptions
+   */
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
     data, undefined, undefined, undefined, context,
@@ -223,8 +246,14 @@ export function createComponentInstanceForVnode (
   return new vnode.componentOptions.Ctor(options)
 }
 
+
 function installComponentHooks (data: VNodeData) {
   const hooks = data.hook || (data.hook = {})
+  /**
+   * @author yuanyang
+   * 用户可以传递自定义钩子函数、
+   * 把用户传入的自定义钩子函数和 componentVNodeHooks 中预定义的钩子函数合并
+   */
   for (let i = 0; i < hooksToMerge.length; i++) {
     const key = hooksToMerge[i]
     const existing = hooks[key]

@@ -57,7 +57,10 @@ export function createCompilerCreator (baseCompile: Function): Function {
       }
 
       finalOptions.warn = warn
-
+      /**
+       *  @author yuanyang
+       *  模板编译的核心函数 baseCompile
+       */
       const compiled = baseCompile(template.trim(), finalOptions)
       if (process.env.NODE_ENV !== 'production') {
         detectErrors(compiled.ast, warn)

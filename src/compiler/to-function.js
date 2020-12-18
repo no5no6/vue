@@ -48,6 +48,10 @@ export function createCompileToFunctionFn (compile: Function): Function {
       }
     }
 
+    /**
+     *  @author yuanyang
+     *  1.读取缓存中的 CompiledFunctionResult 对象，如果有直接返回
+     */
     // check cache
     const key = options.delimiters
       ? String(options.delimiters) + template
@@ -56,6 +60,10 @@ export function createCompileToFunctionFn (compile: Function): Function {
       return cache[key]
     }
 
+    /**
+     *  @author yuanyang
+     *  2. 把模板编译为编译对象（render， staticRenderFns）。字符串形式的 js 代码
+     */
     // compile
     const compiled = compile(template, options)
 
@@ -90,6 +98,11 @@ export function createCompileToFunctionFn (compile: Function): Function {
     // turn code into functions
     const res = {}
     const fnGenErrors = []
+
+    /**
+     *  @author yuanyang
+     *  3. 把字符串形式的 js 代码转换成 js 方法
+     */
     res.render = createFunction(compiled.render, fnGenErrors)
     res.staticRenderFns = compiled.staticRenderFns.map(code => {
       return createFunction(code, fnGenErrors)
@@ -109,6 +122,10 @@ export function createCompileToFunctionFn (compile: Function): Function {
       }
     }
 
+    /**
+     *  @author yuanyang
+     *  4. 缓存并返回 res 对象（ render， staticRenderFns 方法）
+     */
     return (cache[key] = res)
   }
 }

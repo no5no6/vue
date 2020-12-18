@@ -70,7 +70,10 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
-
+  /**
+   * @author yuanyang
+   * prevVnode 为之前处理过的 Vnode 对象（虚拟 DOM 转真实 DOM）
+   */
   const { modules, nodeOps } = backend
 
   for (i = 0; i < hooks.length; ++i) {
@@ -420,7 +423,11 @@ export function createPatchFunction (backend) {
     if (process.env.NODE_ENV !== 'production') {
       checkDuplicateKeys(newCh)
     }
-
+  /**
+   * @author yuanyang
+   * diff 算法
+   * 当前节点和旧节点都没有遍历完成
+   */
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (isUndef(oldStartVnode)) {
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
@@ -431,33 +438,88 @@ export function createPatchFunction (backend) {
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
       } else if (sameVnode(oldEndVnode, newEndVnode)) {
+        /**
+         * @author yuanyang
+         * 直接将该 VNode 节点进行 patchVnode
+         */
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
+        /**
+         * @author yuanyang
+         * 获取下一组开始节点
+         */
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
+        /**
+         * @author yuanyang
+         * 直接将该 VNode 节点进行 patchVnode
+         */
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
+        /**
+         * @author yuanyang
+         * 获取下一组结束节点
+         */
         oldStartVnode = oldCh[++oldStartIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+        /**
+         * @author yuanyang
+         * 进行 patchVnode ，把 oldEndVnode 一栋到最前面
+         */
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
         canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
         oldEndVnode = oldCh[--oldEndIdx]
         newStartVnode = newCh[++newStartIdx]
       } else {
+        /**
+         * @author yuanyang
+         * 以上四种情况都不满足
+         * newStartNode 依次和旧节点比较
+         */
+
+        /**
+         * @author yuanyang
+         * 从新的节点开头获取一个，去老节点中查找相同节点
+         * 先找到新开始的节点的key和老节点相同索引，如果没有找到再通过 sameVnode找
+         */
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
         idxInOld = isDef(newStartVnode.key)
           ? oldKeyToIdx[newStartVnode.key]
           : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
+        /**
+         * @author yuanyang
+         * 如果没有找到
+         */
         if (isUndef(idxInOld)) { // New element
+          /**
+           * @author yuanyang
+           * 创建节点并插入到最前面
+           */
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
         } else {
+          /**
+           * @author yuanyang
+           * 获取要一栋的老节点
+           */
           vnodeToMove = oldCh[idxInOld]
+          /**
+           * @author yuanyang
+           * 如果使用 newStartNode 找到相同的老节点
+           */
           if (sameVnode(vnodeToMove, newStartVnode)) {
+            /**
+             * @author yuanyang
+             * 执行 patchVnode ，并且将找到的旧节点一栋到最前面。
+             */
             patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
             oldCh[idxInOld] = undefined
             canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
           } else {
+            /**
+             * @author yuanyang
+             * 如果 key 相同，但是是不同的元素，创建新元素
+             */
             // same key but different element. treat as new element
             createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
           }
@@ -465,10 +527,22 @@ export function createPatchFunction (backend) {
         newStartVnode = newCh[++newStartIdx]
       }
     }
+    /**
+     * @author yuanyang
+     * 当结束时 oldStartIdx > oldEndIdx ，旧节点遍历完，但是新节点还没有 
+     */
     if (oldStartIdx > oldEndIdx) {
+      /**
+       * @author yuanyang
+       * 说明新节点比老节点多，把剩下的新节点插入到老的节点的后面
+       */
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
+      /**
+       * @author yuanyang
+       * 当结束时 newStartIdx > newEndIdx ，新建节点遍历完，但是旧节点还没有
+       */
       removeVnodes(oldCh, oldStartIdx, oldEndIdx)
     }
   }
@@ -697,8 +771,21 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /**
+   * @author yuanyang
+   * 函数柯里化，让一个函数返回一个函数
+   * core 中的方法和平台无关，传入两个参数后，可以在上面的函数中使用这两个参数
+   */
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
+    /**
+     * @author yuanyang
+     * 新的 vNode 不存在
+     */
     if (isUndef(vnode)) {
+      /**
+       * @author yuanyang
+       * 老的 vNode 存在， 执行 Destroy 钩子函数
+       */
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
     }
@@ -706,16 +793,41 @@ export function createPatchFunction (backend) {
     let isInitialPatch = false
     const insertedVnodeQueue = []
 
+    /**
+     * @author yuanyang
+     * 老的 vNode 不存在
+     */
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
+      /**
+       * @author yuanyang
+       * 创建新的 vNode
+       */
       createElm(vnode, insertedVnodeQueue)
     } else {
+      /**
+       * @author yuanyang
+       * 创建新的 vNode
+       */
       const isRealElement = isDef(oldVnode.nodeType)
+      /**
+       * @author yuanyang
+       * 判断参数是否是真实 DOM ， 是真实 DOM
+       */
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
+        /**
+         * @author yuanyang
+         * 更新操作 Diff 算法
+         */
         // patch existing root node
         patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly)
       } else {
+        /**
+         * @author yuanyang
+         * 第一个参数是真实 DOM ，创建 Vnode
+         * 初始化
+         */
         if (isRealElement) {
           // mounting to a real element
           // check if this is server-rendered content and if we can perform

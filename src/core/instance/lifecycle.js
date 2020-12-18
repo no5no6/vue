@@ -56,6 +56,11 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  /**
+   * @author yuanyang
+   * _update 方法是将 Vnode 渲染成正式的 DOM
+   * 首次渲染、数据更新时调用
+   */
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -64,6 +69,10 @@ export function lifecycleMixin (Vue: Class<Component>) {
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+    /**
+     * @author yuanyang
+     * prevVnode 为之前处理过的 Vnode 对象（虚拟 DOM 转真实 DOM）
+     */
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
